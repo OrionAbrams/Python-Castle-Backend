@@ -1,3 +1,11 @@
+# Instructions
+The instructions for installing the and running the Python realworld app are below.
+Notes:
+
+-My castle.io sdk for python is in pyenv, so not uploaded into this git repo. I put castle in the requirements.txt but you may need to pip3 install castle.
+
+-Where I tried the castle imports and castle.track login_succeeded method is in the views.py file (in /conduit/apps/authentication): that is where the login is routed to when a user logs in via frontend.
+
 # ![Django DRF Example App](project-logo.png)
 
 > ### Example Django DRF codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld-example-apps) API spec.

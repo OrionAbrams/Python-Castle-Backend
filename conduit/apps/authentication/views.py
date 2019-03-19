@@ -3,6 +3,29 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from castle.configuration import configuration
+from castle.client import Client
+from castle import events
+
+
+# Same as setting it through Castle.api_secret
+configuration.api_secret = '2gkpBVNSZzxYusQqtgFEMzxEBDbD2Nwx'
+# For authenticate method you can set failover strategies: allow(default), deny, challenge, throw
+configuration.failover_strategy = 'deny'
+
+# Castle::RequestError is raised when timing out in milliseconds (default: 500 milliseconds)
+configuration.request_timeout = 1000
+
+# Whitelisted and Blacklisted headers are case insensitive and allow to use _ and - as a separator, http prefixes are removed
+# Whitelisted headers
+configuration.whitelisted = ['X_HEADER']
+# or append to default
+configuration.whitelisted = configuration.whitelisted + ['http-x-header']
+
+# Blacklisted headers take advantage over whitelisted elements
+configuration.blacklisted = ['HTTP-X-header']
+# or append to default
+configuration.blacklisted = configuration.blacklisted + ['X_HEADER']
 
 from .renderers import UserJSONRenderer
 from .serializers import (
@@ -17,8 +40,7 @@ class RegistrationAPIView(APIView):
     serializer_class = RegistrationSerializer
 
     def post(self, request):
-        user = request.data.get('user', {})
-
+        
         # The create serializer, validate serializer, save serializer pattern
         # below is common and you will see it a lot throughout this course and
         # your own work later on. Get familiar with it.
@@ -30,10 +52,10 @@ class RegistrationAPIView(APIView):
 
 
 class LoginAPIView(APIView):
+    
     permission_classes = (AllowAny,)
     renderer_classes = (UserJSONRenderer,)
     serializer_class = LoginSerializer
-
     def post(self, request):
         user = request.data.get('user', {})
 
@@ -43,7 +65,18 @@ class LoginAPIView(APIView):
         # handles everything we need.
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
-
+        print("logged in")
+        castle = Client.from_request(request)
+        print(request)
+        print(castle.tracked())
+        castle.track({
+            'event': events.LOGIN_SUCCEEDED,
+            'user_id': 'user_id'
+            # tried 'user_id': 'e325bcdd10ac'
+            # tried 'user_id': '7cb01b98-c5d1-4c19-bde5-394f8a59c5fa-3dc01ae8561f83e87dc01a69'
+        })
+        print(castle.track)
+        
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -80,6 +113,6 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
+   
         return Response(serializer.data, status=status.HTTP_200_OK)
 
