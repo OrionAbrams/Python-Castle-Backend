@@ -9,7 +9,7 @@ from castle import events
 
 
 # Same as setting it through Castle.api_secret
-configuration.api_secret = '2gkpBVNSZzxYusQqtgFEMzxEBDbD2Nwx'
+configuration.api_secret = 'PUT SECRET HERE'
 # For authenticate method you can set failover strategies: allow(default), deny, challenge, throw
 configuration.failover_strategy = 'deny'
 
