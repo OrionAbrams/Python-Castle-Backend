@@ -9,7 +9,7 @@ from castle import events
 
 
 # Same as setting it through Castle.api_secret
-configuration.api_secret = 'Your secret here'
+configuration.api_secret = '2gkpBVNSZzxYusQqtgFEMzxEBDbD2Nwx'
 # For authenticate method you can set failover strategies: allow(default), deny, challenge, throw
 configuration.failover_strategy = 'deny'
 
@@ -63,14 +63,18 @@ class LoginAPIView(APIView):
         # anything to save. Instead, the `validate` method on our serializer
         # handles everything we need.
         serializer = self.serializer_class(data=user)
+
+        # if serializer valid returns false, run the castle LOGIN_FAILED event
         if not serializer.is_valid():
             print("invalid credentials")
             print(request.data)
             castle = Client.from_request(request)
             print(castle.context)
             print(castle.tracked)
+            # manually entering ip because need to use either ip api in client or geolocation and send it over
             castle.context['ip'] = '73.15.8.132'
             castle.context['client_id'] = user['castle_client_id']
+            # manully entered headers for now, but it may not need these headers--seems to get them automatically
             castle.context['headers'] =  {
                 "User-Agent": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko",
                 "Accept": "text/html",
@@ -91,7 +95,8 @@ class LoginAPIView(APIView):
                     'registered_at': '2015-02-23T22:28:55.387Z'
                 }
             })
-    
+
+        # if serializer valid returns false, run the castle LOGIN_SUCCEEDED event
         serializer.is_valid(raise_exception=True)
         print("logged in")
         castle = Client.from_request(request)
@@ -99,8 +104,10 @@ class LoginAPIView(APIView):
         print(request.data)
         print(request.data['user']['castle_client_id'])
         print(castle.tracked())
+        # manually entering ip because need to use either ip api in client or geolocation and send it over
         castle.context['ip'] = '73.15.8.132'
         castle.context['client_id'] = user['castle_client_id']
+        # manully entered headers for now, but it may not need these headers--seems to get them automatically
         castle.context['headers'] =  {
             "User-Agent": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko",
             "Accept": "text/html",
