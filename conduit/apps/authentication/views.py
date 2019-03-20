@@ -9,7 +9,7 @@ from castle import events
 
 
 # Same as setting it through Castle.api_secret
-configuration.api_secret = 'PUT SECRET HERE'
+configuration.api_secret = 'YOUR API KEY'
 # For authenticate method you can set failover strategies: allow(default), deny, challenge, throw
 configuration.failover_strategy = 'deny'
 
@@ -31,7 +31,6 @@ from .renderers import UserJSONRenderer
 from .serializers import (
     LoginSerializer, RegistrationSerializer, UserSerializer
 )
-
 
 class RegistrationAPIView(APIView):
     # Allow any user (authenticated or not) to hit this endpoint.
@@ -67,15 +66,34 @@ class LoginAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         print("logged in")
         castle = Client.from_request(request)
-        print(request)
+        print(castle.context)
+        print(request.data)
+        print(request.data['user']['castle_client_id'])
         print(castle.tracked())
+        castle.context['ip'] = '73.15.8.132'
+        castle.context['client_id'] = user['castle_client_id']
+        castle.context['headers'] =  {
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko",
+            "Accept": "text/html",
+            "Accept-Language": "en-us,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Connection": "Keep-Alive",
+            "Content-Length": "122",
+            "Content-Type": "application/javascript",
+            "Origin": "https://castle.io/",
+            "Referer": "https://castle.io/login"
+            }
+        print(castle.context)
         castle.track({
             'event': events.LOGIN_SUCCEEDED,
-            'user_id': 'user_id'
+            'user_id': 'e325bcdd10ac',
+            'user_traits': {
+                'email': 'johan@castle.io',
+                'registered_at': '2015-02-23T22:28:55.387Z'
+            }
+            # tried 'user_id': request.data['user']['castle_client_id']
             # tried 'user_id': 'e325bcdd10ac'
-            # tried 'user_id': '7cb01b98-c5d1-4c19-bde5-394f8a59c5fa-3dc01ae8561f83e87dc01a69'
         })
-        print(castle.track)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
 
