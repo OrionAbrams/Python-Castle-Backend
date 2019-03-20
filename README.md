@@ -11,6 +11,7 @@ Notes:
 -In your bash_profile, you have to have the following lines of code in order to run the pyenv correctly:
 
 eval "$(pyenv init -)"
+
 eval "$(pyenv virtualenv-init -)"
 
 # ![Django DRF Example App](project-logo.png)
