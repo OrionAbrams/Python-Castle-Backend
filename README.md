@@ -1,6 +1,6 @@
 # Instructions
-The instructions for installing the and running the Python realworld app are below.
-Notes:
+The instructions for installing the and running the Python realworld app are in the "Django DRF Example App" section below.
+Additional Notes:
 
 -My castle.io sdk for python is in pyenv, so not uploaded into this git repo. I put castle in the requirements.txt but you may need to pip3 install castle.
 
