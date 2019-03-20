@@ -8,6 +8,11 @@ Notes:
 
 -You have to write "python3 manage.py runserver" in the terminal to run the backend server.
 
+-In your bash_profile, you have to have the following lines of code in order to run the pyenv correctly:
+
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
 # ![Django DRF Example App](project-logo.png)
 
 > ### Example Django DRF codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld-example-apps) API spec.
